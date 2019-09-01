@@ -1,7 +1,16 @@
 #!/bin/bash
-HOUDINI_PIPELINE="$HOME/GitHub/Houdini_Pipeline"
+#########################################################################################
+#####																				#####
+#####	EDIT THE HOUDINI PIPELINE VARIABLE TO POINT TO YOUR SERVER/LOCAL DIRECTORY	#####
+#####																				#####
+#########################################################################################
+
+export HOUDINI_PIPELINE="$HOME/GitHub/Houdini_Pipeline"
+
+#################################################################################
 
 ##### STORES THE CURRENT DIRECTORY
+printf "\033c"
 CURRENTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ##### DEFINE THE PATH TO THE PIPELINE
@@ -25,9 +34,8 @@ done <"$FOLDERLIST"
 
 ##### DEBUG
 
-
 ##### START HOUDINI
 cd $HIP
 rm -f jump.pref
-echo -e '$L_HDRI'"\n"'$L_TEXTURES'"\n"'$L_3DMODELS'"\n"'$L_3DScans'"\n"'$L_FOOTAGE'"\n"'$L_IES_Lights'>jump.pref
+echo -e "$JUMP">jump.pref
 houdini
