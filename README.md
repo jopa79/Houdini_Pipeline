@@ -5,7 +5,7 @@ Multi OS Houdini Pipeline
 
 I was looking for a nice and easy way to setup my enviornment variables to run houdini on Mac and on Linux.
 The idea is to have one launcher which detects your current OS and set the different environment variables.
-e.g. i use redshift on linux but not on mac os and some cache drive are only avaiable on linux, on mac i need to deactivate the third mouse button. 
+e.g. i use redshift on linux but not on mac os and some cache drive are only avaiable on linux, on mac i need to deactivate the third mouse button....
 This pre-defined setup will clone all necessary repositories from Github like Gamedevelopertools, MOPs, qLib and Lynx.
 It comes with some custom hda's and my own desktop configuration for mac and linux. It will also setup all the typical folders.
 
@@ -20,6 +20,6 @@ It comes with some custom hda's and my own desktop configuration for mac and lin
 
 -support for windows and our internal pipeline stucture.
 
--better implemantion for the *jump.pref* 
+-better implementation for the *jump.pref* 
 
 -setup project launcher
