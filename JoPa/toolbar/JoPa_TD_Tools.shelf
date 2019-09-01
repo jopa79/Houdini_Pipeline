@@ -12,17 +12,15 @@
     <memberTool name="Switch Auto Update0"/>
     <memberTool name="BG Switch"/>
     <memberTool name="RGB to Luma"/>
-    <memberTool name="Point Wrangle"/>
     <memberTool name="Batch Convert"/>
     <memberTool name="attribvop"/>
     <memberTool name="attribwrangle"/>
     <memberTool name="attribwrangle"/>
     <memberTool name="attribvop"/>
     <memberTool name="PIVOT"/>
-    <memberTool name="tool_1"/>
   </toolshelf>
 
-  <tool name="Versioning" label="Versioning" icon="$PIPELINE/icons/fsm_incrementalSave.tif">
+  <tool name="Versioning" label="Versioning" icon="$JOPA/icons/fsm_incrementalSave.tif">
     <script scriptType="python"><![CDATA[import os
 import string
 
@@ -186,34 +184,6 @@ else:
   <tool name="RGB to Luma" label="RGB to Luma" icon="$JOPA/icons/JoPa_RGB_to_Luma.png">
     <script scriptType="python"><![CDATA[import soptoolutils
 soptoolutils.genericTool(kwargs, 'JoPa_RGB_to_Luma_Converter')]]></script>
-  </tool>
-
-  <tool name="Point Wrangle" label="Point Wrangle" icon="hicon:/SVGIcons.index?COMMON_wrangle.svg">
-    <script scriptType="python"><![CDATA[import toolutils as tu
-selectedNodes=hou.selectedNodes()
-ConList=[]
-numCon=0
-numConNode=0
-
-for node in selectedNodes:
-   nodeMove = tu.findConnectedNodes(node, 'output', None)
-   for mNode in nodeMove:
-       mNode.move((0,-1.5))
-   outputNodes = node.outputs()
-   outputConnections = node.outputConnections()
-   for con in outputConnections:
-       ConList.insert(numCon,con.inputIndex())
-       numCon+=1
-   autoTransform = node.createOutputNode('attribwrangle')
-   autoTransform.setPosition(node.position())
-   autoTransform.move((0,-1.5))
-   for conNode in outputNodes:
-       conNode.setInput(ConList[numConNode],autoTransform,0)
-       numConNode+=1
-
-autoTransform.setSelected(True,True,True)
-autoTransform.setDisplayFlag(True)
-autoTransform.setRenderFlag(True)]]></script>
   </tool>
 
   <tool name="Batch Convert" label="Batch Convert" icon="hicon:/SVGIcons.index?BUTTONS_auto_save.svg">
