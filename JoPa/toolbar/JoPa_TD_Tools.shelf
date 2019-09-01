@@ -1,0 +1,1535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="JoPa TD Tools" label="JoPa TD Tools">
+    <memberTool name="Versioning"/>
+    <memberTool name="Export Scene"/>
+    <memberTool name="Import Scene"/>
+    <memberTool name="Switch Auto Update0"/>
+    <memberTool name="BG Switch"/>
+    <memberTool name="RGB to Luma"/>
+    <memberTool name="Point Wrangle"/>
+    <memberTool name="Batch Convert"/>
+    <memberTool name="attribvop"/>
+    <memberTool name="attribwrangle"/>
+    <memberTool name="attribwrangle"/>
+    <memberTool name="attribvop"/>
+    <memberTool name="PIVOT"/>
+    <memberTool name="tool_1"/>
+  </toolshelf>
+
+  <tool name="Versioning" label="Versioning" icon="$PIPELINE/icons/fsm_incrementalSave.tif">
+    <script scriptType="python"><![CDATA[import os
+import string
+
+def IncreaseVersion(fullPath, originalVersion=None):
+    fn, ext = os.path.splitext(fullPath)
+    fnreverse = fn[::-1]  # reverse string
+
+    versionString = ""
+    versionNumber = 0
+    beginVersionString = False
+    for letter in fnreverse:
+        if letter.isdigit() is True:
+            beginVersionString = True
+            versionString += letter
+            #print("Digit: {0}").format(letter)
+        else:
+            #print("Non-Digit: {0}").format(letter)
+            if beginVersionString is True:
+                versionString = versionString[::-1]  # reverse string
+                versionNumber = int(versionString)
+                break  # first non-digit ends version string
+    if originalVersion is None:
+        if versionString == '':
+            originalVersion = "No Version"
+        else:
+            originalVersion = versionString
+
+    versionNumber += 1
+    fill_length = len(versionString)
+    divider = ''
+    if fill_length == 0:
+        if fn[-1] != '_' or fn[-1] != '-' :
+            divider = '_'
+        fill_length = 3
+    versionStringNew = divider + str(versionNumber).zfill(fill_length)
+
+    fnreverse = fnreverse.replace(versionString[::-1], versionStringNew[::-1], 1)
+    fullPathNew = fnreverse[::-1] + ext
+
+    if os.path.exists(fullPathNew):
+        print("{0} already exists, increasing further...").format(fullPathNew, originalVersion)
+        fullPathNew = IncreaseVersion(fullPathNew, originalVersion)
+    else:
+        print("Increased version {0} to {1}").format(originalVersion, versionStringNew)
+        print("Changed path {0} to {1}").format(fullPath, fullPathNew)
+    return fullPathNew
+    
+def main():
+    currentPath = hou.hipFile.name()
+    fullPathNew = IncreaseVersion(currentPath)
+    
+    hou.hipFile.setName(fullPathNew)
+    hou.hipFile.save()
+    print("Saved as {0}").format(fullPathNew)
+
+main()]]></script>
+  </tool>
+
+  <tool name="Versioning" label="Versioning" icon="$PIPELINE/icons/fsm_incrementalSave.tif">
+    <script scriptType="python"><![CDATA[import os
+import string
+
+def IncreaseVersion(fullPath, originalVersion=None):
+    fn, ext = os.path.splitext(fullPath)
+    fnreverse = fn[::-1]  # reverse string
+
+    versionString = ""
+    versionNumber = 0
+    beginVersionString = False
+    for letter in fnreverse:
+        if letter.isdigit() is True:
+            beginVersionString = True
+            versionString += letter
+            #print("Digit: {0}").format(letter)
+        else:
+            #print("Non-Digit: {0}").format(letter)
+            if beginVersionString is True:
+                versionString = versionString[::-1]  # reverse string
+                versionNumber = int(versionString)
+                break  # first non-digit ends version string
+    if originalVersion is None:
+        if versionString == '':
+            originalVersion = "No Version"
+        else:
+            originalVersion = versionString
+
+    versionNumber += 1
+    fill_length = len(versionString)
+    divider = ''
+    if fill_length == 0:
+        if fn[-1] != '_' or fn[-1] != '-' :
+            divider = '_'
+        fill_length = 3
+    versionStringNew = divider + str(versionNumber).zfill(fill_length)
+
+    fnreverse = fnreverse.replace(versionString[::-1], versionStringNew[::-1], 1)
+    fullPathNew = fnreverse[::-1] + ext
+
+    if os.path.exists(fullPathNew):
+        print("{0} already exists, increasing further...").format(fullPathNew, originalVersion)
+        fullPathNew = IncreaseVersion(fullPathNew, originalVersion)
+    else:
+        print("Increased version {0} to {1}").format(originalVersion, versionStringNew)
+        print("Changed path {0} to {1}").format(fullPath, fullPathNew)
+    return fullPathNew
+    
+def main():
+    currentPath = hou.hipFile.name()
+    fullPathNew = IncreaseVersion(currentPath)
+    
+    hou.hipFile.setName(fullPathNew)
+    hou.hipFile.save()
+    print("Saved as {0}").format(fullPathNew)
+
+main()]]></script>
+  </tool>
+
+  <tool name="Export Scene" label="Export Scene" icon="hicon:/SVGIcons.index?BUTTONS_up.svg">
+    <script scriptType="hscript"><![CDATA[opscript -G -r />file.cmd]]></script>
+  </tool>
+
+  <tool name="Import Scene" label="Import Scene" icon="hicon:/SVGIcons.index?BUTTONS_down.svg">
+    <script scriptType="hscript"><![CDATA[set myfile = `run("filechooser -t cmd")`
+cmdread $myfile]]></script>
+  </tool>
+
+  <tool name="Switch Auto Update0" label="Switch Auto Update" icon="hicon:/SVGIcons.index?BUTTONS_cook.svg">
+    <script scriptType="python"><![CDATA[# directly taken from a sidefx forum post
+import hou
+mode = hou.updateModeSetting().name()
+
+if mode == 'AutoUpdate':
+        hou.setUpdateMode(hou.updateMode.Manual)
+if mode == 'Manual':
+        hou.setUpdateMode(hou.updateMode.AutoUpdate)]]></script>
+  </tool>
+
+  <tool name="Switch Auto Update" label="Switch Auto Update" icon="hicon:/SVGIcons.index?BUTTONS_cook.svg">
+    <script scriptType="python"><![CDATA[# directly taken from a sidefx forum post
+import hou
+mode = hou.updateModeSetting().name()
+
+if mode == 'AutoUpdate':
+        hou.setUpdateMode(hou.updateMode.Manual)
+if mode == 'Manual':
+        hou.setUpdateMode(hou.updateMode.AutoUpdate)]]></script>
+  </tool>
+
+  <tool name="BG Switch" label="Background Color Switch" icon="hicon:/SVGIcons.index?COP2_border.svg">
+    <script scriptType="python"><![CDATA[import toolutils
+p = toolutils.sceneViewer().curViewport().settings()
+
+if p.colorScheme() == hou.viewportColorScheme.Dark:
+    p.setColorScheme(hou.viewportColorScheme.Light)
+elif p.colorScheme() == hou.viewportColorScheme.Light:   
+    p.setColorScheme(hou.viewportColorScheme.Grey)
+else:
+    p.setColorScheme(hou.viewportColorScheme.Dark)]]></script>
+  </tool>
+
+  <tool name="RGB to Luma" label="RGB to Luma" icon="$PIPELINE/icons/JoPa_RGB_to_Luma.png">
+    <script scriptType="python"><![CDATA[import soptoolutils
+soptoolutils.genericTool(kwargs, 'JoPa_RGB_to_Luma_Converter')]]></script>
+  </tool>
+
+  <tool name="Point Wrangle" label="Point Wrangle" icon="hicon:/SVGIcons.index?COMMON_wrangle.svg">
+    <script scriptType="python"><![CDATA[import toolutils as tu
+selectedNodes=hou.selectedNodes()
+ConList=[]
+numCon=0
+numConNode=0
+
+for node in selectedNodes:
+   nodeMove = tu.findConnectedNodes(node, 'output', None)
+   for mNode in nodeMove:
+       mNode.move((0,-1.5))
+   outputNodes = node.outputs()
+   outputConnections = node.outputConnections()
+   for con in outputConnections:
+       ConList.insert(numCon,con.inputIndex())
+       numCon+=1
+   autoTransform = node.createOutputNode('attribwrangle')
+   autoTransform.setPosition(node.position())
+   autoTransform.move((0,-1.5))
+   for conNode in outputNodes:
+       conNode.setInput(ConList[numConNode],autoTransform,0)
+       numConNode+=1
+
+autoTransform.setSelected(True,True,True)
+autoTransform.setDisplayFlag(True)
+autoTransform.setRenderFlag(True)]]></script>
+  </tool>
+
+  <tool name="Batch Convert" label="Batch Convert" icon="hicon:/SVGIcons.index?BUTTONS_auto_save.svg">
+    <script scriptType="python"><![CDATA[import batch_convert
+batch_convert.runGui()]]></script>
+  </tool>
+
+  <tool name="attribwrangle" label="Remove_Points1" icon="SOP_attribwrangle">
+    <helpURL>operator:Sop/attribwrangle</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/attribwrangle</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('attribwrangle'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_file1_Remove_Points1 (Sop/attribwrangle)
+set _obj_file1_Remove_Points1 = `run("opadd -e -n -v attribwrangle Remove_Points1")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_Remove_Points1
+opspareds '    group {         name    "folder1"         label   "Code"          parm {             name    "group"             baseparm             label   "Group"             export  none             bindselector points "Modify Points"                 "Select the points to affect and press Enter to complete."                 0 1 0xffffffff 0 grouptype 0         }         parm {             name    "grouptype"             baseparm             label   "Group Type"             export  none         }         parm {             name    "class"             baseparm             label   "Run Over"             export  none         }         parm {             name    "vex_numcount"             baseparm             label   "Number Count"             export  none         }         parm {             name    "vex_threadjobsize"             baseparm             label   "Thread Job Size"             export  none         }         parm {             name    "snippet"             baseparm             label   "VEXpression"             export  all         }         parm {             name    "exportlist"             baseparm             label   "Attributes to Create"             export  none         }         parm {             name    "vex_strict"             baseparm             label   "Enforce Prototypes"             export  none         }     }      group {         name    "folder1_1"         label   "Bindings"          parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindname#"                 baseparm                 label   "Attribute Name"                 export  none             }             parm {                 name    "bindparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "groupautobind"             baseparm             label   "Autobind Groups by Name"             export  none         }         multiparm {             name    "groupbindings"             label    "Group Bindings"             baseparm             default 0             parmtag { "autoscope" "0000000000000000" }             parmtag { "multistartoffset" "1" }              parm {                 name    "bindgroupname#"                 baseparm                 label   "Group Name"                 export  none             }             parm {                 name    "bindgroupparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }         parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }         parm {             name    "vex_matchattrib"             baseparm             label   "Attribute to Match"             export  none         }         parm {             name    "vex_inplace"             baseparm             label   "Compute Results In Place"             export  none         }         parm {             name    "vex_selectiongroup"             baseparm             label   "Output Selection Group"             export  none         }     }      parm {         name    "threshold"         label   "Threshold"         type    float         default { "0" }         range   { 0 1 }     } ' $_obj_file1_Remove_Points1
+opparm $_obj_file1_Remove_Points1  bindings ( 0 ) groupbindings ( 0 )
+opparm $_obj_file1_Remove_Points1 snippet ( 'if (rand(@ptnum) > ch(\'threshold\'))removepoint(0,@ptnum);\n' ) threshold ( 0.92100000000000004 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_file1_Remove_Points1
+opexprlanguage -s hscript $_obj_file1_Remove_Points1
+opuserdata -n '___Version___' -v '' $_obj_file1_Remove_Points1
+opset -p on $_obj_file1_Remove_Points1
+
+opcf $arg1
+opwire -n $_obj_file1_pointdeform1 -0 $_obj_file1_Remove_Points1
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_file1_Remove_Points1
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_file1_Remove_Points1
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="attribvop" label="curvature" icon="SOP_attribvop">
+    <helpURL>operator:Sop/attribvop</helpURL>
+    <toolMenuContext name="network">
+      <contextOpType>Sop/attribvop</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('attribvop'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_file1_curvature (Sop/attribvop)
+set _obj_file1_curvature = `run("opadd -e -n -v attribvop curvature")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature
+opspareds '    group {         name    "stdswitcher3"         label   "Vex Setup"          parm {             name    "vexsrc"             baseparm             label   "Vex Source"             export  all         }         parm {             name    "shoppath"             baseparm             label   "Shop Path"             export  all         }         parm {             name    "script"             baseparm             label   "Script"             export  all         }         parm {             name    "clear"             baseparm             label   "Re-load VEX Functions"             export  all         }         parm {             name    "vop_compiler"             baseparm             label   "Compiler"             export  none         }         parm {             name    "vop_forcecompile"             baseparm             label   "Force Compile"             export  none         }         parm {             name    "vex_cwdpath"             baseparm             label   "Evaluation Node Path"             export  none         }         parm {             name    "vex_outputmask"             baseparm             label   "Export Parameters"             export  none         }         parm {             name    "vex_multithread"             baseparm             label   "Enable Multithreading"             export  none         }     }      group {         name    "stdswitcher3_1"         label   "Attribute Bindings"          parm {             name    "bindgroup"             baseparm             label   "Group"             export  none             bindselector uvselect "Modify Points"                 "Select the points to affect and press Enter to complete."                 0 1 0xffffffff 0 bindgrouptype 0         }         parm {             name    "bindgrouptype"             baseparm             label   "Group Type"             export  none         }         parm {             name    "bindclass"             baseparm             label   "Run Over"             export  none         }         parm {             name    "autobind"             baseparm             label   "Autobind by Name"             export  none         }         multiparm {             name    "bindings"             label    "Number of Bindings"             baseparm             default 0             parmtag { "multistartoffset" "1" }              parm {                 name    "bindname#"                 baseparm                 label   "Attribute Name"                 export  none             }             parm {                 name    "bindparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "groupautobind"             baseparm             label   "Autobind Groups by Name"             export  none         }         multiparm {             name    "groupbindings"             label    "Group Bindings"             baseparm             default 0             parmtag { "multistartoffset" "1" }              parm {                 name    "bindgroupname#"                 baseparm                 label   "Group Name"                 export  none             }             parm {                 name    "bindgroupparm#"                 baseparm                 label   "VEX Parameter"                 export  none             }         }          parm {             name    "vex_updatenmls"             baseparm             label   "Update Normals If Displaced"             export  none         }     }      parm {         name    "ptnum"         label   "Point Number"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "vtxnum"         label   "Vertex Number"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "primnum"         label   "Primitive Number"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "id"         label   "Id"         type    integer         invisible         default { "-1" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "numpt"         label   "Number of Points"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "numvtx"         label   "Number of Vertices"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "numprim"         label   "Number of Prims"         type    integer         invisible         default { "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Time"         label   "Time"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "TimeInc"         label   "Time Inc"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Frame"         label   "Frame"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "life"         label   "Life"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "age"         label   "Age"         type    float         invisible         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput2"         label   "Second Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput3"         label   "Third Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput4"         label   "Fourth Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "OpInput1"         label   "First Input"         type    string         invisible         default { "" }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "uv"         label   "UV"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "P"         label   "P"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "v"         label   "Velocity"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "force"         label   "Force"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Cd"         label   "Cd"         type    float         invisible         size    3         default { "1" "1" "1" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "N"         label   "N"         type    float         invisible         size    3         default { "0" "0" "0" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "Gamma"         label   "Gamma"         type    float         default { "1" }         range   { 0 10 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "srcmax"         label   "Maximum Value In Source Range"         type    float         default { "1" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     }     parm {         name    "vex_numcount"         baseparm         label   "Number Count"         export  none     }     parm {         name    "vex_threadjobsize"         baseparm         label   "Thread Job Size"         export  none     }     parm {         name    "vex_matchattrib"         baseparm         label   "Attribute to Match"         export  none     }     parm {         name    "vex_inplace"         baseparm         label   "Compute Results In Place"         export  none     }     parm {         name    "vex_selectiongroup"         baseparm         label   "Output Selection Group"         export  none     }     parm {         name    "parm"         label   "parm"         type    float         default { "0" }         range   { 0 1 }         parmtag { "parmvop" "1" }         parmtag { "shaderparmcontexts" "cvex" }     } ' $_obj_file1_curvature
+opparm $_obj_file1_curvature  bindings ( 0 ) groupbindings ( 0 )
+opparm -V 17.0.416 $_obj_file1_curvature Gamma ( 0.19 ) srcmax ( 0.014999999999999999 )
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off $_obj_file1_curvature
+opexprlanguage -s hscript $_obj_file1_curvature
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature
+opcf $_obj_file1_curvature
+
+# Node $_obj_file1_curvature_geometryvopglobal3 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_geometryvopglobal3 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopglobal3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopglobal3
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopglobal3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopglobal3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_geometryvopglobal3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopglobal3
+
+# Node $_obj_file1_curvature_geometryvopoutput3 (Vop/geometryvopoutput)
+set _obj_file1_curvature_geometryvopoutput3 = `run("opadd -e -n -v geometryvopoutput geometryvopoutput3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopoutput3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopoutput3
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopoutput3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopoutput3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_geometryvopoutput3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopoutput3
+
+# Node $_obj_file1_curvature_neighbourcount3 (Vop/neighbourcount)
+set _obj_file1_curvature_neighbourcount3 = `run("opadd -e -n -v neighbourcount neighbourcount3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_neighbourcount3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_neighbourcount3
+opexprlanguage -s hscript $_obj_file1_curvature_neighbourcount3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_neighbourcount3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_neighbourcount3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_neighbourcount3
+
+# Node $_obj_file1_curvature_for3 (Vop/for)
+set _obj_file1_curvature_for3 = `run("opadd -e -n -v for for3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for3
+opexprlanguage -s hscript $_obj_file1_curvature_for3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for3
+
+# Node $_obj_file1_curvature_const3 (Vop/constant)
+set _obj_file1_curvature_const3 = `run("opadd -e -n -v constant const3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_const3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_const3
+opexprlanguage -s hscript $_obj_file1_curvature_const3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_const3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_const3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_const3
+
+# Node $_obj_file1_curvature_divide3 (Vop/divide)
+set _obj_file1_curvature_divide3 = `run("opadd -e -n -v divide divide3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_divide3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_divide3
+opexprlanguage -s hscript $_obj_file1_curvature_divide3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_divide3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_divide3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_divide3
+
+# Node $_obj_file1_curvature_floattovec3 (Vop/floattovec)
+set _obj_file1_curvature_floattovec3 = `run("opadd -e -n -v floattovec floattovec3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_floattovec3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_floattovec3
+opexprlanguage -s hscript $_obj_file1_curvature_floattovec3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_floattovec3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_floattovec3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_floattovec3
+
+# Node $_obj_file1_curvature_colorcorrection3 (Vop/colorcorrection)
+set _obj_file1_curvature_colorcorrection3 = `run("opadd -e -n -v colorcorrection colorcorrection3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_colorcorrection3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_colorcorrection3
+opexprlanguage -s hscript $_obj_file1_curvature_colorcorrection3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_colorcorrection3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_colorcorrection3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_colorcorrection3
+
+# Node $_obj_file1_curvature_Gamma2 (Vop/parameter)
+set _obj_file1_curvature_Gamma2 = `run("opadd -e -n -v parameter Gamma2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_Gamma2
+opparm -V 17.0.416 $_obj_file1_curvature_Gamma2 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_Gamma2
+opexprlanguage -s hscript $_obj_file1_curvature_Gamma2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_Gamma2
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_Gamma2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_Gamma2
+
+# Node $_obj_file1_curvature_vectofloat3 (Vop/vectofloat)
+set _obj_file1_curvature_vectofloat3 = `run("opadd -e -n -v vectofloat vectofloat3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_vectofloat3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_vectofloat3
+opexprlanguage -s hscript $_obj_file1_curvature_vectofloat3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_vectofloat3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_vectofloat3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_vectofloat3
+
+# Node $_obj_file1_curvature_fit3 (Vop/fit)
+set _obj_file1_curvature_fit3 = `run("opadd -e -n -v fit fit3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_fit3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_fit3
+opexprlanguage -s hscript $_obj_file1_curvature_fit3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_fit3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_fit3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_fit3
+
+# Node $_obj_file1_curvature_srcmax2 (Vop/parameter)
+set _obj_file1_curvature_srcmax2 = `run("opadd -e -n -v parameter srcmax2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_srcmax2
+opparm -V 17.0.416 $_obj_file1_curvature_srcmax2 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_srcmax2
+opexprlanguage -s hscript $_obj_file1_curvature_srcmax2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_srcmax2
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_srcmax2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_srcmax2
+
+# Node $_obj_file1_curvature_parm3 (Vop/parameter)
+set _obj_file1_curvature_parm3 = `run("opadd -e -n -v parameter parm3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_parm3
+opparm -V 17.0.416 $_obj_file1_curvature_parm3 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_parm3
+opexprlanguage -s hscript $_obj_file1_curvature_parm3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_parm3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_parm3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_parm3
+
+# Node $_obj_file1_curvature_geometryvopglobal4 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_geometryvopglobal4 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopglobal4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopglobal4
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopglobal4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopglobal4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_geometryvopglobal4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopglobal4
+
+# Node $_obj_file1_curvature_geometryvopoutput4 (Vop/geometryvopoutput)
+set _obj_file1_curvature_geometryvopoutput4 = `run("opadd -e -n -v geometryvopoutput geometryvopoutput4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopoutput4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopoutput4
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopoutput4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopoutput4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_geometryvopoutput4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopoutput4
+
+# Node $_obj_file1_curvature_neighbourcount4 (Vop/neighbourcount)
+set _obj_file1_curvature_neighbourcount4 = `run("opadd -e -n -v neighbourcount neighbourcount4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_neighbourcount4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_neighbourcount4
+opexprlanguage -s hscript $_obj_file1_curvature_neighbourcount4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_neighbourcount4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_neighbourcount4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_neighbourcount4
+
+# Node $_obj_file1_curvature_for4 (Vop/for)
+set _obj_file1_curvature_for4 = `run("opadd -e -n -v for for4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for4
+opexprlanguage -s hscript $_obj_file1_curvature_for4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for4
+
+# Node $_obj_file1_curvature_const4 (Vop/constant)
+set _obj_file1_curvature_const4 = `run("opadd -e -n -v constant const4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_const4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_const4
+opexprlanguage -s hscript $_obj_file1_curvature_const4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_const4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_const4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_const4
+
+# Node $_obj_file1_curvature_divide4 (Vop/divide)
+set _obj_file1_curvature_divide4 = `run("opadd -e -n -v divide divide4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_divide4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_divide4
+opexprlanguage -s hscript $_obj_file1_curvature_divide4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_divide4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_divide4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_divide4
+
+# Node $_obj_file1_curvature_floattovec4 (Vop/floattovec)
+set _obj_file1_curvature_floattovec4 = `run("opadd -e -n -v floattovec floattovec4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_floattovec4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_floattovec4
+opexprlanguage -s hscript $_obj_file1_curvature_floattovec4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_floattovec4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_floattovec4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_floattovec4
+
+# Node $_obj_file1_curvature_colorcorrection4 (Vop/colorcorrection)
+set _obj_file1_curvature_colorcorrection4 = `run("opadd -e -n -v colorcorrection colorcorrection4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_colorcorrection4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_colorcorrection4
+opexprlanguage -s hscript $_obj_file1_curvature_colorcorrection4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_colorcorrection4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_colorcorrection4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_colorcorrection4
+
+# Node $_obj_file1_curvature_Gamma3 (Vop/parameter)
+set _obj_file1_curvature_Gamma3 = `run("opadd -e -n -v parameter Gamma3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_Gamma3
+opparm -V 17.0.416 $_obj_file1_curvature_Gamma3 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_Gamma3
+opexprlanguage -s hscript $_obj_file1_curvature_Gamma3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_Gamma3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_Gamma3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_Gamma3
+
+# Node $_obj_file1_curvature_vectofloat4 (Vop/vectofloat)
+set _obj_file1_curvature_vectofloat4 = `run("opadd -e -n -v vectofloat vectofloat4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_vectofloat4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_vectofloat4
+opexprlanguage -s hscript $_obj_file1_curvature_vectofloat4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_vectofloat4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_vectofloat4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_vectofloat4
+
+# Node $_obj_file1_curvature_fit4 (Vop/fit)
+set _obj_file1_curvature_fit4 = `run("opadd -e -n -v fit fit4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_fit4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_fit4
+opexprlanguage -s hscript $_obj_file1_curvature_fit4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_fit4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_fit4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_fit4
+
+# Node $_obj_file1_curvature_srcmax3 (Vop/parameter)
+set _obj_file1_curvature_srcmax3 = `run("opadd -e -n -v parameter srcmax3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_srcmax3
+opparm -V 17.0.416 $_obj_file1_curvature_srcmax3 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_srcmax3
+opexprlanguage -s hscript $_obj_file1_curvature_srcmax3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_srcmax3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_srcmax3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_srcmax3
+
+# Node $_obj_file1_curvature_parm4 (Vop/parameter)
+set _obj_file1_curvature_parm4 = `run("opadd -e -n -v parameter parm4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_parm4
+opparm -V 17.0.416 $_obj_file1_curvature_parm4 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_parm4
+opexprlanguage -s hscript $_obj_file1_curvature_parm4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_parm4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_parm4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_parm4
+
+# Node $_obj_file1_curvature_geometryvopglobal2 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_geometryvopglobal2 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopglobal2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopglobal2
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopglobal2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopglobal2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_geometryvopglobal2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopglobal2
+
+# Node $_obj_file1_curvature_geometryvopoutput2 (Vop/geometryvopoutput)
+set _obj_file1_curvature_geometryvopoutput2 = `run("opadd -e -n -v geometryvopoutput geometryvopoutput2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_geometryvopoutput2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopoutput2
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopoutput2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopoutput2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_geometryvopoutput2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_geometryvopoutput2
+
+# Node $_obj_file1_curvature_neighbourcount2 (Vop/neighbourcount)
+set _obj_file1_curvature_neighbourcount2 = `run("opadd -e -n -v neighbourcount neighbourcount2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_neighbourcount2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_neighbourcount2
+opexprlanguage -s hscript $_obj_file1_curvature_neighbourcount2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_neighbourcount2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_neighbourcount2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_neighbourcount2
+
+# Node $_obj_file1_curvature_for2 (Vop/for)
+set _obj_file1_curvature_for2 = `run("opadd -e -n -v for for2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for2
+opexprlanguage -s hscript $_obj_file1_curvature_for2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for2
+
+# Node $_obj_file1_curvature_const2 (Vop/constant)
+set _obj_file1_curvature_const2 = `run("opadd -e -n -v constant const2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_const2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_const2
+opexprlanguage -s hscript $_obj_file1_curvature_const2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_const2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_const2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_const2
+
+# Node $_obj_file1_curvature_divide2 (Vop/divide)
+set _obj_file1_curvature_divide2 = `run("opadd -e -n -v divide divide2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_divide2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_divide2
+opexprlanguage -s hscript $_obj_file1_curvature_divide2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_divide2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_divide2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_divide2
+
+# Node $_obj_file1_curvature_floattovec2 (Vop/floattovec)
+set _obj_file1_curvature_floattovec2 = `run("opadd -e -n -v floattovec floattovec2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_floattovec2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_floattovec2
+opexprlanguage -s hscript $_obj_file1_curvature_floattovec2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_floattovec2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_floattovec2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_floattovec2
+
+# Node $_obj_file1_curvature_colorcorrection2 (Vop/colorcorrection)
+set _obj_file1_curvature_colorcorrection2 = `run("opadd -e -n -v colorcorrection colorcorrection2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_colorcorrection2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_colorcorrection2
+opexprlanguage -s hscript $_obj_file1_curvature_colorcorrection2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_colorcorrection2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_colorcorrection2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_colorcorrection2
+
+# Node $_obj_file1_curvature_Gamma1 (Vop/parameter)
+set _obj_file1_curvature_Gamma1 = `run("opadd -e -n -v parameter Gamma1")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_Gamma1
+opparm -V 17.0.416 $_obj_file1_curvature_Gamma1 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_Gamma1
+opexprlanguage -s hscript $_obj_file1_curvature_Gamma1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_Gamma1
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_Gamma1
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_Gamma1
+
+# Node $_obj_file1_curvature_vectofloat2 (Vop/vectofloat)
+set _obj_file1_curvature_vectofloat2 = `run("opadd -e -n -v vectofloat vectofloat2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_vectofloat2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_vectofloat2
+opexprlanguage -s hscript $_obj_file1_curvature_vectofloat2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_vectofloat2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_vectofloat2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_vectofloat2
+
+# Node $_obj_file1_curvature_fit2 (Vop/fit)
+set _obj_file1_curvature_fit2 = `run("opadd -e -n -v fit fit2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_fit2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_fit2
+opexprlanguage -s hscript $_obj_file1_curvature_fit2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_fit2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_fit2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_fit2
+
+# Node $_obj_file1_curvature_srcmax1 (Vop/parameter)
+set _obj_file1_curvature_srcmax1 = `run("opadd -e -n -v parameter srcmax1")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_srcmax1
+opparm -V 17.0.416 $_obj_file1_curvature_srcmax1 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_srcmax1
+opexprlanguage -s hscript $_obj_file1_curvature_srcmax1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_srcmax1
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_srcmax1
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_srcmax1
+
+# Node $_obj_file1_curvature_parm2 (Vop/parameter)
+set _obj_file1_curvature_parm2 = `run("opadd -e -n -v parameter parm2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_parm2
+opparm -V 17.0.416 $_obj_file1_curvature_parm2 exportcontext ( cvex )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_parm2
+opexprlanguage -s hscript $_obj_file1_curvature_parm2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_parm2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_parm2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_parm2
+
+# Node $_obj_file1_curvature_geometryvopglobal1 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_geometryvopglobal1 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal1")`
+oplocate -x `$arg2 + -1.3708` -y `$arg3 + 3.14534` $_obj_file1_curvature_geometryvopglobal1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_geometryvopglobal1
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopglobal1
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopglobal1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopglobal1
+
+# Node $_obj_file1_curvature_geometryvopoutput1 (Vop/geometryvopoutput)
+set _obj_file1_curvature_geometryvopoutput1 = `run("opadd -e -n -v geometryvopoutput geometryvopoutput1")`
+oplocate -x `$arg2 + 19.9895` -y `$arg3 + 4.9270800000000001` $_obj_file1_curvature_geometryvopoutput1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_geometryvopoutput1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_geometryvopoutput1
+opexprlanguage -s hscript $_obj_file1_curvature_geometryvopoutput1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_geometryvopoutput1
+
+# Node $_obj_file1_curvature_neighbourcount1 (Vop/neighbourcount)
+set _obj_file1_curvature_neighbourcount1 = `run("opadd -e -n -v neighbourcount neighbourcount1")`
+oplocate -x `$arg2 + 1.99044` -y `$arg3 + 2.16534` $_obj_file1_curvature_neighbourcount1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_neighbourcount1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_neighbourcount1
+opexprlanguage -s hscript $_obj_file1_curvature_neighbourcount1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_neighbourcount1
+
+# Node $_obj_file1_curvature_for1 (Vop/for)
+set _obj_file1_curvature_for1 = `run("opadd -e -n -v for for1")`
+oplocate -x `$arg2 + 4.0382999999999996` -y `$arg3 + 3.3808600000000002` $_obj_file1_curvature_for1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1
+opexprlanguage -s hscript $_obj_file1_curvature_for1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1
+opcf $_obj_file1_curvature_for1
+
+# Node $_obj_file1_curvature_for1_subinput3 (Vop/subinput)
+set _obj_file1_curvature_for1_subinput3 = `run("opadd -e -n -v subinput subinput3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subinput3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subinput3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subinput3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subinput3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_subinput3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subinput3
+
+# Node $_obj_file1_curvature_for1_neighbour3 (Vop/neighbour)
+set _obj_file1_curvature_for1_neighbour3 = `run("opadd -e -n -v neighbour neighbour3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_neighbour3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_neighbour3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_neighbour3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_neighbour3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_neighbour3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_neighbour3
+
+# Node $_obj_file1_curvature_for1_geometryvopglobal3 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_for1_geometryvopglobal3 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_geometryvopglobal3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_geometryvopglobal3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_geometryvopglobal3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_geometryvopglobal3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_geometryvopglobal3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_geometryvopglobal3
+
+# Node $_obj_file1_curvature_for1_getattrib3 (Vop/getattrib)
+set _obj_file1_curvature_for1_getattrib3 = `run("opadd -e -n -v getattrib getattrib3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_getattrib3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_getattrib3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_getattrib3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_getattrib3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_getattrib3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_getattrib3
+
+# Node $_obj_file1_curvature_for1_subtract3 (Vop/subtract)
+set _obj_file1_curvature_for1_subtract3 = `run("opadd -e -n -v subtract subtract3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subtract3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subtract3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subtract3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subtract3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_subtract3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subtract3
+
+# Node $_obj_file1_curvature_for1_normalize5 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize5 = `run("opadd -e -n -v normalize normalize5")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize5
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize5
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize5
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize5
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_normalize5
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize5
+
+# Node $_obj_file1_curvature_for1_normalize6 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize6 = `run("opadd -e -n -v normalize normalize6")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize6
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize6
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize6
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize6
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_normalize6
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize6
+
+# Node $_obj_file1_curvature_for1_dot3 (Vop/dot)
+set _obj_file1_curvature_for1_dot3 = `run("opadd -e -n -v dot dot3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_dot3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_dot3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_dot3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_dot3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_dot3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_dot3
+
+# Node $_obj_file1_curvature_for1_add3 (Vop/add)
+set _obj_file1_curvature_for1_add3 = `run("opadd -e -n -v add add3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_add3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_add3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_add3
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_add3
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_add3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_add3
+
+# Node $_obj_file1_curvature_for1_subinput4 (Vop/subinput)
+set _obj_file1_curvature_for1_subinput4 = `run("opadd -e -n -v subinput subinput4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subinput4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subinput4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subinput4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subinput4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_subinput4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subinput4
+
+# Node $_obj_file1_curvature_for1_neighbour4 (Vop/neighbour)
+set _obj_file1_curvature_for1_neighbour4 = `run("opadd -e -n -v neighbour neighbour4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_neighbour4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_neighbour4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_neighbour4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_neighbour4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_neighbour4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_neighbour4
+
+# Node $_obj_file1_curvature_for1_geometryvopglobal4 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_for1_geometryvopglobal4 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_geometryvopglobal4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_geometryvopglobal4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_geometryvopglobal4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_geometryvopglobal4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_geometryvopglobal4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_geometryvopglobal4
+
+# Node $_obj_file1_curvature_for1_getattrib4 (Vop/getattrib)
+set _obj_file1_curvature_for1_getattrib4 = `run("opadd -e -n -v getattrib getattrib4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_getattrib4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_getattrib4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_getattrib4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_getattrib4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_getattrib4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_getattrib4
+
+# Node $_obj_file1_curvature_for1_subtract4 (Vop/subtract)
+set _obj_file1_curvature_for1_subtract4 = `run("opadd -e -n -v subtract subtract4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subtract4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subtract4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subtract4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subtract4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_subtract4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subtract4
+
+# Node $_obj_file1_curvature_for1_normalize7 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize7 = `run("opadd -e -n -v normalize normalize7")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize7
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize7
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize7
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize7
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_normalize7
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize7
+
+# Node $_obj_file1_curvature_for1_normalize8 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize8 = `run("opadd -e -n -v normalize normalize8")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize8
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize8
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize8
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize8
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_normalize8
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize8
+
+# Node $_obj_file1_curvature_for1_dot4 (Vop/dot)
+set _obj_file1_curvature_for1_dot4 = `run("opadd -e -n -v dot dot4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_dot4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_dot4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_dot4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_dot4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_dot4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_dot4
+
+# Node $_obj_file1_curvature_for1_add4 (Vop/add)
+set _obj_file1_curvature_for1_add4 = `run("opadd -e -n -v add add4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_add4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_add4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_add4
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_add4
+opuserdata -n '___toolcount___' -v '28' $_obj_file1_curvature_for1_add4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_add4
+
+# Node $_obj_file1_curvature_for1_subinput2 (Vop/subinput)
+set _obj_file1_curvature_for1_subinput2 = `run("opadd -e -n -v subinput subinput2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subinput2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subinput2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subinput2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subinput2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_subinput2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subinput2
+
+# Node $_obj_file1_curvature_for1_neighbour2 (Vop/neighbour)
+set _obj_file1_curvature_for1_neighbour2 = `run("opadd -e -n -v neighbour neighbour2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_neighbour2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_neighbour2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_neighbour2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_neighbour2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_neighbour2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_neighbour2
+
+# Node $_obj_file1_curvature_for1_geometryvopglobal2 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_for1_geometryvopglobal2 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_geometryvopglobal2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_geometryvopglobal2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_geometryvopglobal2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_geometryvopglobal2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_geometryvopglobal2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_geometryvopglobal2
+
+# Node $_obj_file1_curvature_for1_getattrib2 (Vop/getattrib)
+set _obj_file1_curvature_for1_getattrib2 = `run("opadd -e -n -v getattrib getattrib2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_getattrib2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_getattrib2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_getattrib2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_getattrib2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_getattrib2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_getattrib2
+
+# Node $_obj_file1_curvature_for1_subtract2 (Vop/subtract)
+set _obj_file1_curvature_for1_subtract2 = `run("opadd -e -n -v subtract subtract2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_subtract2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subtract2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subtract2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subtract2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_subtract2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_subtract2
+
+# Node $_obj_file1_curvature_for1_normalize3 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize3 = `run("opadd -e -n -v normalize normalize3")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize3
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize3
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize3
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize3
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_normalize3
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize3
+
+# Node $_obj_file1_curvature_for1_normalize4 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize4 = `run("opadd -e -n -v normalize normalize4")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_normalize4
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize4
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize4
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize4
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_normalize4
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_normalize4
+
+# Node $_obj_file1_curvature_for1_dot2 (Vop/dot)
+set _obj_file1_curvature_for1_dot2 = `run("opadd -e -n -v dot dot2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_dot2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_dot2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_dot2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_dot2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_dot2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_dot2
+
+# Node $_obj_file1_curvature_for1_add2 (Vop/add)
+set _obj_file1_curvature_for1_add2 = `run("opadd -e -n -v add add2")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_curvature_for1_add2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_add2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_add2
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_add2
+opuserdata -n '___toolcount___' -v '23' $_obj_file1_curvature_for1_add2
+opuserdata -n '___toolid___' -v 'Import Scene' $_obj_file1_curvature_for1_add2
+
+# Node $_obj_file1_curvature_for1_suboutput1 (Vop/suboutput)
+set _obj_file1_curvature_for1_suboutput1 = `run("opadd -e -n -v suboutput suboutput1")`
+oplocate -x `$arg2 + 11.3207` -y `$arg3 + 1.3618300000000001` $_obj_file1_curvature_for1_suboutput1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_suboutput1
+opset -d on -r on -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_suboutput1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_suboutput1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_suboutput1
+
+# Node $_obj_file1_curvature_for1_subinput1 (Vop/subinput)
+set _obj_file1_curvature_for1_subinput1 = `run("opadd -e -n -v subinput subinput1")`
+oplocate -x `$arg2 + -0.57569700000000001` -y `$arg3 + 0.35395599999999999` $_obj_file1_curvature_for1_subinput1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_subinput1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subinput1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subinput1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subinput1
+
+# Node $_obj_file1_curvature_for1_neighbour1 (Vop/neighbour)
+set _obj_file1_curvature_for1_neighbour1 = `run("opadd -e -n -v neighbour neighbour1")`
+oplocate -x `$arg2 + 1.0157099999999999` -y `$arg3 + 1.0165` $_obj_file1_curvature_for1_neighbour1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_neighbour1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_neighbour1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_neighbour1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_neighbour1
+
+# Node $_obj_file1_curvature_for1_geometryvopglobal1 (Vop/geometryvopglobal::2.0)
+set _obj_file1_curvature_for1_geometryvopglobal1 = `run("opadd -e -n -v geometryvopglobal::2.0 geometryvopglobal1")`
+oplocate -x `$arg2 + -1.91062` -y `$arg3 + 2.0232100000000002` $_obj_file1_curvature_for1_geometryvopglobal1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_geometryvopglobal1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_geometryvopglobal1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_geometryvopglobal1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_geometryvopglobal1
+
+# Node $_obj_file1_curvature_for1_getattrib1 (Vop/getattrib)
+set _obj_file1_curvature_for1_getattrib1 = `run("opadd -e -n -v getattrib getattrib1")`
+oplocate -x `$arg2 + 2.7719800000000001` -y `$arg3 + 1.6632199999999999` $_obj_file1_curvature_for1_getattrib1
+opparm $_obj_file1_curvature_for1_getattrib1 attrib ( P )
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_getattrib1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_getattrib1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_getattrib1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_getattrib1
+
+# Node $_obj_file1_curvature_for1_subtract1 (Vop/subtract)
+set _obj_file1_curvature_for1_subtract1 = `run("opadd -e -n -v subtract subtract1")`
+oplocate -x `$arg2 + 4.6713800000000001` -y `$arg3 + 2.5437400000000001` $_obj_file1_curvature_for1_subtract1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_subtract1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_subtract1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_subtract1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_subtract1
+
+# Node $_obj_file1_curvature_for1_normalize1 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize1 = `run("opadd -e -n -v normalize normalize1")`
+oplocate -x `$arg2 + 6.2416400000000003` -y `$arg3 + 2.5297299999999998` $_obj_file1_curvature_for1_normalize1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_normalize1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize1
+
+# Node $_obj_file1_curvature_for1_normalize2 (Vop/normalize)
+set _obj_file1_curvature_for1_normalize2 = `run("opadd -e -n -v normalize normalize2")`
+oplocate -x `$arg2 + 6.2016` -y `$arg3 + 3.3637800000000002` $_obj_file1_curvature_for1_normalize2
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_normalize2
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_normalize2
+opexprlanguage -s hscript $_obj_file1_curvature_for1_normalize2
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_normalize2
+
+# Node $_obj_file1_curvature_for1_dot1 (Vop/dot)
+set _obj_file1_curvature_for1_dot1 = `run("opadd -e -n -v dot dot1")`
+oplocate -x `$arg2 + 8.0142500000000005` -y `$arg3 + 2.6734100000000001` $_obj_file1_curvature_for1_dot1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_dot1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_dot1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_dot1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_for1_dot1
+
+# Node $_obj_file1_curvature_for1_add1 (Vop/add)
+set _obj_file1_curvature_for1_add1 = `run("opadd -e -n -v add add1")`
+oplocate -x `$arg2 + 9.63978` -y `$arg3 + 1.9794099999999999` $_obj_file1_curvature_for1_add1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_for1_add1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_for1_add1
+opexprlanguage -s hscript $_obj_file1_curvature_for1_add1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_for1_add1
+opcf ..
+
+# Node $_obj_file1_curvature_const1 (Vop/constant)
+set _obj_file1_curvature_const1 = `run("opadd -e -n -v constant const1")`
+oplocate -x `$arg2 + 0.056177499999999998` -y `$arg3 + 3.9992800000000002` $_obj_file1_curvature_const1
+opparm -V 17.0.416 $_obj_file1_curvature_const1 constname ( angle )
+opcolor -c 0 0 0 $_obj_file1_curvature_const1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_const1
+opexprlanguage -s hscript $_obj_file1_curvature_const1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_const1
+
+# Node $_obj_file1_curvature_divide1 (Vop/divide)
+set _obj_file1_curvature_divide1 = `run("opadd -e -n -v divide divide1")`
+oplocate -x `$arg2 + 6.5486199999999997` -y `$arg3 + 3.3837600000000001` $_obj_file1_curvature_divide1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_divide1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_divide1
+opexprlanguage -s hscript $_obj_file1_curvature_divide1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_divide1
+
+# Node $_obj_file1_curvature_floattovec1 (Vop/floattovec)
+set _obj_file1_curvature_floattovec1 = `run("opadd -e -n -v floattovec floattovec1")`
+oplocate -x `$arg2 + 8.9321300000000008` -y `$arg3 + 3.3837600000000001` $_obj_file1_curvature_floattovec1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_floattovec1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_floattovec1
+opexprlanguage -s hscript $_obj_file1_curvature_floattovec1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_floattovec1
+
+# Node $_obj_file1_curvature_colorcorrection1 (Vop/colorcorrection)
+set _obj_file1_curvature_colorcorrection1 = `run("opadd -e -n -v colorcorrection colorcorrection1")`
+oplocate -x `$arg2 + 11.866199999999999` -y `$arg3 + 3.14534` $_obj_file1_curvature_colorcorrection1
+chblockbegin
+chadd -t 0 0 $_obj_file1_curvature_colorcorrection1 Gamma
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch(\'../Gamma/floatdef\')' $_obj_file1_curvature_colorcorrection1/Gamma
+chblockend
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_colorcorrection1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_colorcorrection1
+opexprlanguage -s hscript $_obj_file1_curvature_colorcorrection1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_colorcorrection1
+
+# Node $_obj_file1_curvature_Gamma (Vop/parameter)
+set _obj_file1_curvature_Gamma = `run("opadd -e -n -v parameter Gamma")`
+oplocate -x `$arg2 + 8.3390500000000003` -y `$arg3 + 2.8189600000000001` $_obj_file1_curvature_Gamma
+opparm -V 17.0.416 $_obj_file1_curvature_Gamma parmname ( Gamma ) parmlabel ( Gamma ) floatdef ( 1 ) rangeflt ( 0 10 ) exportcontext ( cvex )
+opcolor -c 1 1 0.40000000596046448 $_obj_file1_curvature_Gamma
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e off -b off -L off -M off -H on -E off $_obj_file1_curvature_Gamma
+opexprlanguage -s hscript $_obj_file1_curvature_Gamma
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_Gamma
+
+# Node $_obj_file1_curvature_vectofloat1 (Vop/vectofloat)
+set _obj_file1_curvature_vectofloat1 = `run("opadd -e -n -v vectofloat vectofloat1")`
+oplocate -x `$arg2 + 14.4922` -y `$arg3 + 3.14534` $_obj_file1_curvature_vectofloat1
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_vectofloat1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_vectofloat1
+opexprlanguage -s hscript $_obj_file1_curvature_vectofloat1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_vectofloat1
+
+# Node $_obj_file1_curvature_fit1 (Vop/fit)
+set _obj_file1_curvature_fit1 = `run("opadd -e -n -v fit fit1")`
+oplocate -x `$arg2 + 16.811699999999998` -y `$arg3 + 2.9476399999999998` $_obj_file1_curvature_fit1
+chblockbegin
+chadd -t 0 0 $_obj_file1_curvature_fit1 srcmax
+chkey -t 0 -v 1 -m 0 -a 0 -A 0 -T a  -F 'ch(\'../srcmax/floatdef\')' $_obj_file1_curvature_fit1/srcmax
+chblockend
+opcolor -c 0.80000001192092896 0.80000001192092896 0.80000001192092896 $_obj_file1_curvature_fit1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c off -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_fit1
+opexprlanguage -s hscript $_obj_file1_curvature_fit1
+opuserdata -n '___Version___' -v '' $_obj_file1_curvature_fit1
+
+# Node $_obj_file1_curvature_srcmax (Vop/parameter)
+set _obj_file1_curvature_srcmax = `run("opadd -e -n -v parameter srcmax")`
+oplocate -x `$arg2 + 11.394399999999999` -y `$arg3 + 3.3476400000000002` $_obj_file1_curvature_srcmax
+opparm -V 17.0.416 $_obj_file1_curvature_srcmax parmname ( srcmax ) parmlabel ( 'Maximum Value In Source Range' ) floatdef ( 1 ) exportcontext ( cvex )
+opcolor -c 1 1 0.40000000596046448 $_obj_file1_curvature_srcmax
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e off -b off -L off -M off -H on -E off $_obj_file1_curvature_srcmax
+opexprlanguage -s hscript $_obj_file1_curvature_srcmax
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_srcmax
+
+# Node $_obj_file1_curvature_parm1 (Vop/parameter)
+set _obj_file1_curvature_parm1 = `run("opadd -e -n -v parameter parm1")`
+oplocate -x `$arg2 + 19.176300000000001` -y `$arg3 + 2.4976400000000001` $_obj_file1_curvature_parm1
+opparm -V 17.0.416 $_obj_file1_curvature_parm1 parmname ( curve ) usebound ( on ) exportparm ( on ) exportcontext ( cvex )
+opcolor -c 1 1 0.40000000596046448 $_obj_file1_curvature_parm1
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F off -c on -e on -b off -L off -M off -H on -E off $_obj_file1_curvature_parm1
+opexprlanguage -s hscript $_obj_file1_curvature_parm1
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_curvature_parm1
+opcf ..
+opcf $_obj_file1_curvature
+opcf $_obj_file1_curvature_for1
+oporder -e subinput3 neighbour3 geometryvopglobal3 getattrib3 subtract3 normalize5 normalize6 dot3 add3 subinput4 neighbour4 geometryvopglobal4 getattrib4 subtract4 normalize7 normalize8 dot4 add4 subinput2 neighbour2 geometryvopglobal2 getattrib2 subtract2 normalize3 normalize4 dot2 add2 suboutput1 subinput1 neighbour1 geometryvopglobal1 getattrib1 subtract1 normalize1 normalize2 dot1 add1 
+opcf ..
+oporder -e geometryvopglobal3 geometryvopoutput3 neighbourcount3 for3 const3 divide3 floattovec3 colorcorrection3 Gamma2 vectofloat3 fit3 srcmax2 parm3 geometryvopglobal4 geometryvopoutput4 neighbourcount4 for4 const4 divide4 floattovec4 colorcorrection4 Gamma3 vectofloat4 fit4 srcmax3 parm4 geometryvopglobal2 geometryvopoutput2 neighbourcount2 for2 const2 divide2 floattovec2 colorcorrection2 Gamma1 vectofloat2 fit2 srcmax1 parm2 geometryvopglobal1 geometryvopoutput1 neighbourcount1 for1 const1 divide1 floattovec1 colorcorrection1 Gamma vectofloat1 fit1 srcmax parm1 
+opcf ..
+opset -p on $_obj_file1_curvature
+
+opcf $arg1
+opwire -n $_obj_file1_solidconform2 -0 $_obj_file1_curvature
+opcf $_obj_file1_curvature
+opwire -n $_obj_file1_curvature_fit1 -3 $_obj_file1_curvature_geometryvopoutput1
+opwire -n -o 12 $_obj_file1_curvature_geometryvopglobal1 -1 $_obj_file1_curvature_neighbourcount1
+opwire -n $_obj_file1_curvature_neighbourcount1 -1 $_obj_file1_curvature_for1
+opwire -n $_obj_file1_curvature_const1 -3 $_obj_file1_curvature_for1
+opcf $_obj_file1_curvature_for1
+opwire -n $_obj_file1_curvature_for1_add1 -3 $_obj_file1_curvature_for1_suboutput1
+opwire -n -o 12 $_obj_file1_curvature_for1_geometryvopglobal1 -1 $_obj_file1_curvature_for1_neighbour1
+opwire -n $_obj_file1_curvature_for1_subinput1 -2 $_obj_file1_curvature_for1_neighbour1
+opwire -n -o 18 $_obj_file1_curvature_for1_geometryvopglobal1 -0 $_obj_file1_curvature_for1_getattrib1
+opwire -n $_obj_file1_curvature_for1_neighbour1 -3 $_obj_file1_curvature_for1_getattrib1
+opwire -n $_obj_file1_curvature_for1_geometryvopglobal1 -0 $_obj_file1_curvature_for1_subtract1
+opwire -n -o 1 $_obj_file1_curvature_for1_getattrib1 -1 $_obj_file1_curvature_for1_subtract1
+opwire -n $_obj_file1_curvature_for1_subtract1 -0 $_obj_file1_curvature_for1_normalize1
+opwire -n -o 8 $_obj_file1_curvature_for1_geometryvopglobal1 -0 $_obj_file1_curvature_for1_normalize2
+opwire -n $_obj_file1_curvature_for1_normalize2 -0 $_obj_file1_curvature_for1_dot1
+opwire -n $_obj_file1_curvature_for1_normalize1 -1 $_obj_file1_curvature_for1_dot1
+opwire -n $_obj_file1_curvature_for1_dot1 -0 $_obj_file1_curvature_for1_add1
+opwire -n -o 3 $_obj_file1_curvature_for1_subinput1 -1 $_obj_file1_curvature_for1_add1
+opcf ..
+opwire -n $_obj_file1_curvature_for1 -0 $_obj_file1_curvature_divide1
+opwire -n $_obj_file1_curvature_neighbourcount1 -1 $_obj_file1_curvature_divide1
+opwire -n $_obj_file1_curvature_divide1 -0 $_obj_file1_curvature_floattovec1
+opwire -n $_obj_file1_curvature_floattovec1 -0 $_obj_file1_curvature_colorcorrection1
+opwire -n $_obj_file1_curvature_Gamma -6 $_obj_file1_curvature_colorcorrection1
+opwire -n $_obj_file1_curvature_colorcorrection1 -0 $_obj_file1_curvature_vectofloat1
+opwire -n $_obj_file1_curvature_vectofloat1 -0 $_obj_file1_curvature_fit1
+opwire -n $_obj_file1_curvature_srcmax -2 $_obj_file1_curvature_fit1
+opwire -n $_obj_file1_curvature_fit1 -0 $_obj_file1_curvature_parm1
+opcf ..
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_file1_curvature
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_file1_curvature
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+
+  <tool name="PIVOT" label="PIVOT" icon="MISC_generic">
+    <toolMenuContext name="network">
+      <contextOpType>Sop/xform</contextOpType>
+    </toolMenuContext>
+    <script scriptType="python"><![CDATA[
+import sys
+import toolutils
+
+outputitem = None
+inputindex = -1
+inputitem = None
+outputindex = -1
+
+num_args = 1
+h_extra_args = ''
+pane = toolutils.activePane(kwargs)
+if not isinstance(pane, hou.NetworkEditor):
+    pane = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor)
+    if pane is None:
+       hou.ui.displayMessage(
+               'Cannot create node: cannot find any network pane')
+       sys.exit(0)
+else: # We're creating this tool from the TAB menu inside a network editor
+    pane_node = pane.pwd()
+    if kwargs.has_key("outputnodename") and kwargs.has_key("inputindex"):
+        outputitem = pane_node.item(kwargs["outputnodename"])
+        inputindex = kwargs["inputindex"]
+        h_extra_args += 'set arg4 = "' + kwargs["outputnodename"] + '"\n'
+        h_extra_args += 'set arg5 = "' + str(inputindex) + '"\n'
+        num_args = 6
+    if kwargs.has_key("inputnodename") and kwargs.has_key("outputindex"):
+        inputitem = pane_node.item(kwargs["inputnodename"])
+        outputindex = kwargs["outputindex"]
+        h_extra_args += 'set arg6 = "' + kwargs["inputnodename"] + '"\n'
+        h_extra_args += 'set arg9 = "' + str(outputindex) + '"\n'
+        num_args = 9 
+    if kwargs.has_key("autoplace"):
+        autoplace = kwargs["autoplace"]
+    else:
+        autoplace = False
+    # If shift-clicked we want to auto append to the current
+    # node
+    if kwargs.has_key("shiftclick") and kwargs["shiftclick"]:
+        if inputitem is None:
+            inputitem = pane.currentNode()
+            outputindex = 0
+    if kwargs.has_key("nodepositionx") and             kwargs.has_key("nodepositiony"):
+        try:
+            pos = [ float( kwargs["nodepositionx"] ),
+                    float( kwargs["nodepositiony"] )]
+        except:
+            pos = None
+    else:
+        pos = None
+
+    if not autoplace and not pane.listMode():
+        if pos is not None:
+            pass
+        elif outputitem is None:
+            pos = pane.selectPosition(inputitem, outputindex, None, -1)
+        else:
+            pos = pane.selectPosition(inputitem, outputindex,
+                                      outputitem, inputindex)
+
+    if pos is not None:
+        if kwargs.has_key("node_bbox"):
+            size = kwargs["node_bbox"]
+            pos[0] -= size[0] / 2
+            pos[1] -= size[1] / 2
+        else:
+            pos[0] -= 0.573625
+            pos[1] -= 0.220625
+        h_extra_args += 'set arg2 = "' + str(pos[0]) + '"\n'
+        h_extra_args += 'set arg3 = "' + str(pos[1]) + '"\n'
+h_extra_args += 'set argc = "' + str(num_args) + '"\n'
+            
+pane_node = pane.pwd()
+child_type = pane_node.childTypeCategory().nodeTypes()
+
+if not child_type.has_key('xform'):
+   hou.ui.displayMessage(
+           'Cannot create node: incompatible pane network type')
+   sys.exit(0)
+
+# First clear the node selection
+pane_node.setSelected(False, True)
+
+h_path = pane_node.path()
+h_preamble = 'set arg1 = "' + h_path + '"\n'
+h_cmd = r''' 
+if ($argc < 2 || "$arg2" == "") then
+   set arg2 = 0
+endif
+if ($argc < 3 || "$arg3" == "") then
+   set arg3 = 0
+endif
+# Automatically generated script
+# $arg1 - the path to add this node
+# $arg2 - x position of the tile
+# $arg3 - y position of the tile
+# $arg4 - input node to wire to
+# $arg5 - which input to wire to
+# $arg6 - output node to wire to
+# $arg7 - the type of this node
+# $arg8 - the node is an indirect input
+# $arg9 - index of output from $arg6
+
+\set noalias = 1
+set saved_path = `execute("oppwf")`
+opcf $arg1
+
+# Node $_obj_file1_SET_CENTER (Sop/xform)
+set _obj_file1_SET_CENTER = `run("opadd -e -n -v xform SET_CENTER")`
+oplocate -x `$arg2 + 0` -y `$arg3 + 0` $_obj_file1_SET_CENTER
+opparm -V 17.0.416 $_obj_file1_SET_CENTER t ( -6.0408706665039063 -260.45242309570313 -73.071502685546875 ) p ( 6.0408706665039063 260.45242309570313 73.071502685546875 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_file1_SET_CENTER
+opexprlanguage -s hscript $_obj_file1_SET_CENTER
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_SET_CENTER
+opset -p on $_obj_file1_SET_CENTER
+opcf $arg1
+
+# Node $_obj_file1_SET_PIVOT (Sop/xform)
+set _obj_file1_SET_PIVOT = `run("opadd -e -n -v xform SET_PIVOT")`
+oplocate -x `$arg2 + 0` -y `$arg3 + -1.232766` $_obj_file1_SET_PIVOT
+chblockbegin
+chadd -t 0 0 $_obj_file1_SET_PIVOT ty
+chkey -t 0 -v -0.0037972428966538767 -m 0 -a 0 -A 0 -T a  -F 'bbox(0,4)' $_obj_file1_SET_PIVOT/ty
+chblockend
+opparm -V 17.0.416 $_obj_file1_SET_PIVOT t ( 0 ty 0 ) parmgroup_pivotxform ( 1 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_file1_SET_PIVOT
+opexprlanguage -s hscript $_obj_file1_SET_PIVOT
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_SET_PIVOT
+opset -p on $_obj_file1_SET_PIVOT
+opcf $arg1
+
+# Node $_obj_file1_WORLDSCALE (Sop/xform)
+set _obj_file1_WORLDSCALE = `run("opadd -e -n -v xform WORLDSCALE")`
+oplocate -x `$arg2 + 0` -y `$arg3 + -2.352239` $_obj_file1_WORLDSCALE
+opparm -V 17.0.416 $_obj_file1_WORLDSCALE scale ( 0.10000000000000001 )
+opset -d off -r off -h off -f off -y off -t off -l off -s off -u off -F on -c on -e on -b off $_obj_file1_WORLDSCALE
+opexprlanguage -s hscript $_obj_file1_WORLDSCALE
+opuserdata -n '___Version___' -v '17.0.416' $_obj_file1_WORLDSCALE
+opset -p on $_obj_file1_WORLDSCALE
+
+opcf $arg1
+opcf $arg1
+opwire -n $_obj_file1_SET_CENTER -0 $_obj_file1_SET_PIVOT
+opcf $arg1
+opwire -n $_obj_file1_SET_PIVOT -0 $_obj_file1_WORLDSCALE
+
+set oidx = 0
+if ($argc >= 9 && "$arg9" != "") then
+    set oidx = $arg9
+endif
+
+if ($argc >= 5 && "$arg4" != "") then
+    set output = $_obj_file1_WORLDSCALE
+    opwire -n $output -$arg5 $arg4
+endif
+if ($argc >= 6 && "$arg6" != "") then
+    set input = $_obj_file1_SET_CENTER
+    if ($arg8) then
+        opwire -n -i $arg6 -0 $input
+    else
+        opwire -n -o $oidx $arg6 -0 $input
+    endif
+endif
+opcf $saved_path
+'''
+hou.hscript(h_preamble + h_extra_args + h_cmd)
+]]></script>
+  </tool>
+</shelfDocument>
