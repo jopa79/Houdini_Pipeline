@@ -19,5 +19,7 @@ It comes with some custom hda's and my own desktop configuration for mac and lin
 **ToDo**
 
 -support for windows and our internal pipeline stucture.
+
 -better implemantion for the *jump.pref* 
+
 -setup project launcher
