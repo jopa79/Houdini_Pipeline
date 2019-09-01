@@ -18,12 +18,12 @@ It comes with some custom hda's and my own desktop configuration for mac and lin
  3. copy the edited *Houdini_Launcher.sh* to all of your Project folder where you want to start Houdini. 
  4. if you like to run it without commandline, rename the launcher from *Houdini_Launcher.sh* to *Houdini_Launcher.command* which makes the file executable with a double click.
 
-**Installation for Windows**
+**Installation for Windows:**
 
 TBA
 
 
-**ToDo**
+**ToDo:**
 
 -support for windows and our internal pipeline stucture.
 
