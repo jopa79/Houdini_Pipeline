@@ -81,7 +81,7 @@ def main():
 main()]]></script>
   </tool>
 
-  <tool name="Versioning" label="Versioning" icon="$PIPELINE/icons/fsm_incrementalSave.tif">
+  <tool name="Versioning" label="Versioning" icon="$JOPA/icons/fsm_incrementalSave.tif">
     <script scriptType="python"><![CDATA[import os
 import string
 
@@ -183,7 +183,7 @@ else:
     p.setColorScheme(hou.viewportColorScheme.Dark)]]></script>
   </tool>
 
-  <tool name="RGB to Luma" label="RGB to Luma" icon="$PIPELINE/icons/JoPa_RGB_to_Luma.png">
+  <tool name="RGB to Luma" label="RGB to Luma" icon="$JOPA/icons/JoPa_RGB_to_Luma.png">
     <script scriptType="python"><![CDATA[import soptoolutils
 soptoolutils.genericTool(kwargs, 'JoPa_RGB_to_Luma_Converter')]]></script>
   </tool>
