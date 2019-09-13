@@ -150,7 +150,7 @@ if [ "$OSNAME" == "Linux" ];
 
 	##### RAID CACHE LINUX ONLY
 	export RAID="/mnt/RAID/HOUDINI_CACHE"
-	export HOUDINI_MENU_PATH="$HOUDINI_MENU_PATH:$DEADLINE:&"
+	export HOUDINI_MENU_PATH="$HOUDINI_MENU_PATH:$DEADLINE"
 
 	export JUMP="'$L_HDRI'"\n"'$L_TEXTURES'"\n"'$L_3DMODELS'"\n"'$L_3DScans'"\n"'$L_FOOTAGE'"\n"'$L_IES_Lights'"
 fi
