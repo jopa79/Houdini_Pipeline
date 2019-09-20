@@ -3,7 +3,7 @@ Multi OS Houdini Pipeline
 
 **Introduction**
 
-I was looking for a nice and easy way to setup my enviornment variables to run houdini on Mac and Linux.
+I was looking for a nice and easy way to setup my environment variables to run houdini on Mac and Linux.
 The idea is to have one launcher which detects your current OS and set the different environment variables.
 e.g. i use redshift on linux but not on mac os and some cache drive are only avaiable on linux, on mac i need to deactivate the third mouse button....
 This pre-defined setup will clone or update all necessary repositories from Github like: 
