@@ -1,32 +1,307 @@
-# Houdini_Pipeline
-Multi OS Houdini Pipeline 
+# Houdini Pipeline
+**Multi-OS Houdini Environment Management System**
 
-**Introduction**
+[![macOS](https://img.shields.io/badge/macOS-Compatible-brightgreen.svg)]()
+[![Linux](https://img.shields.io/badge/Linux-Compatible-brightgreen.svg)]()
+[![Windows](https://img.shields.io/badge/Windows-TBA-lightgrey.svg)]()
 
-I was looking for a nice and easy way to setup my environment variables to run houdini on Mac and Linux.
-The idea is to have one launcher which detects your current OS and set the different environment variables.
-e.g. i use redshift on linux but not on mac os and some cache drive are only avaiable on linux, on mac i need to deactivate the third mouse button....
-This pre-defined setup will clone or update all necessary repositories from Github like: 
-Gamedevelopertools, batch_textures_convert, MOPs, qLib, Lynx.
+## Introduction
 
-It comes with some custom hda's and my own desktop configuration for mac and linux. It will also setup all the typical folders.
+A robust, production-ready Houdini environment management system that automates installation, configuration, and project initialization across macOS and Linux platforms. The pipeline intelligently detects your OS and configures platform-specific settings, manages external packages, and provides custom tools for VFX workflows.
 
-**Installation for OS X and Linux:**
+**Key Features:**
+- 🚀 **Auto-detection** of pipeline path and OS configuration
+- 📝 **Comprehensive logging** with timestamped log files
+- 🔄 **Automated package management** with Git retry logic
+- ✅ **Error handling** and validation throughout
+- 🎨 **Custom HDAs** and shelf tools for TD workflows
+- 🖥️ **Desktop layouts** optimized for different screen sizes
+- 🎯 **Jump preferences** for quick file browser access (macOS & Linux)
 
- 1. clone or download this repository to your server
- 2. edit the *Houdini_Launcher.sh* and change the path from line 8 to your installation directory e.g." *export HOUDINI_PIPELINE="yourpath/Houdini_Pipeline*"
- 3. copy the edited *Houdini_Launcher.sh* to all of your Project folder where you want to start Houdini. 
- 4. if you like to run it without commandline, rename the launcher from *Houdini_Launcher.sh* to *Houdini_Launcher.command* which makes the file executable with a double click.
+## What's New (Latest Updates)
 
-**Installation for Windows:**
+### ✨ Enhanced Features
+- **Auto-path detection**: No more manual path editing! Pipeline path is auto-detected
+- **Comprehensive logging**: All operations logged to `logs/` directory with timestamps
+- **Non-interactive mode**: Run with flags or environment variables for CI/CD
+- **Git retry logic**: Automatic retry with exponential backoff for network failures
+- **Version flexibility**: Override Houdini version via environment variables
+- **macOS Jump Preferences**: Now includes library path quick access for macOS
+- **Configuration validation**: Validates Houdini installation and required files
 
-TBA
+### 🛡️ Robustness Improvements
+- Error handling for all critical operations
+- Path validation before execution
+- GPU device number configuration via environment variables
+- Timeout handling for interactive prompts
+- Detailed error messages for troubleshooting
 
+## Installation
 
-**ToDo:**
+### Quick Start (Recommended)
 
--support for windows and our internal pipeline stucture.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/Houdini_Pipeline.git
+   cd Houdini_Pipeline
+   ```
 
--better implementation for the *jump.pref* 
+2. **Copy launcher to your project:**
+   ```bash
+   cp Houdini_Launcher.sh /path/to/your/project/
+   cd /path/to/your/project/
+   ```
 
--setup project launcher
+3. **Run the launcher:**
+   ```bash
+   ./Houdini_Launcher.sh
+   ```
+
+   The pipeline path will be auto-detected! 🎉
+
+### Advanced Installation
+
+If auto-detection doesn't work, set the pipeline path manually:
+
+```bash
+export HOUDINI_PIPELINE="/path/to/Houdini_Pipeline"
+./Houdini_Launcher.sh
+```
+
+### GUI Execution (macOS)
+
+Rename the launcher to make it double-clickable:
+```bash
+mv Houdini_Launcher.sh Houdini_Launcher.command
+chmod +x Houdini_Launcher.command
+```
+
+## Usage
+
+### Basic Usage
+
+```bash
+./Houdini_Launcher.sh
+```
+
+### Non-Interactive Mode (for CI/CD)
+
+**Enable repository updates:**
+```bash
+HOUDINI_UPDATE_REPOS=1 ./Houdini_Launcher.sh
+# or
+./Houdini_Launcher.sh --update-repos
+```
+
+**Skip repository updates:**
+```bash
+HOUDINI_UPDATE_REPOS=0 ./Houdini_Launcher.sh
+# or
+./Houdini_Launcher.sh --skip-repos
+```
+
+### Custom Houdini Version
+
+```bash
+export HOUDINI_VERSION="19.5.640"
+./Houdini_Launcher.sh
+```
+
+### Custom GPU Configuration (Linux)
+
+```bash
+export HOUDINI_OCL_DEVICENUMBER=1
+export HOUDINI_NVIDIA_OPTIX_DEVICENUMBER=0
+./Houdini_Launcher.sh
+```
+
+### macOS Trackpad Configuration
+
+```bash
+# Force trackpad mode (middle-mouse button pan disabled)
+export HOUDINI_MMB_PAN=0
+./Houdini_Launcher.sh
+
+# Force mouse mode (middle-mouse button pan enabled)
+export HOUDINI_MMB_PAN=1
+./Houdini_Launcher.sh
+```
+
+## Features
+
+### Automated Package Management
+
+The pipeline automatically manages these external repositories:
+- **GameDevelopmentToolset** (SideFX official tools)
+- **qLib** (Community utility library)
+- **MOPS** (Motion graphics toolkit)
+- **VFX-LYNX** (VFX framework)
+- **batch_textures_convert** (Texture automation)
+
+Packages are cloned on first run and updated on subsequent runs (if enabled).
+
+### Custom Tools & Assets
+
+**7 Houdini Digital Assets (HDAs):**
+- JoPa_Infection.hda - Infection/growth simulation
+- set_pivot_to_Y0.hda - Pivot manipulation utility
+- curvature.hda - Surface curvature analysis
+- density_noise.hda - Procedural noise generation
+- remove_points.hda - Point filtering utility
+- volume_noise.hda - Volume noise generation
+- JoPa_RGB_to_Luma.hdalc - Color space conversion
+
+**12+ Shelf Tools:**
+- Versioning system with auto-increment
+- Scene import/export utilities
+- Batch texture conversion
+- Background switching
+- Attribute wrangling tools
+- And more...
+
+**Desktop Layouts:**
+- JoPa_Wide.desk - Optimized for wide monitors
+- JoPa_MacBook.desk - Optimized for laptop screens
+
+### Project Structure
+
+The launcher automatically creates this folder structure:
+```
+project/
+├── assets/
+│   ├── abc/          # Alembic cache
+│   ├── fbx_obj/      # Model imports
+│   ├── textures/     # Texture assets
+│   └── export/       # Scene exports
+├── backup/           # Automatic backups
+├── flip/             # FLIP simulation cache
+├── sim/              # General simulation cache
+├── geo/              # Geometry files
+├── hda/              # Custom digital assets
+├── render/           # Render outputs
+├── scripts/          # Custom scripts
+├── logs/             # Launcher logs
+└── ...
+```
+
+### Logging
+
+All launcher operations are logged to:
+```
+<project>/logs/houdini_launch_YYYYMMDD_HHMMSS.log
+```
+
+Logs include:
+- Timestamp for each operation
+- Configuration detection results
+- Repository update status
+- Error messages and warnings
+- Houdini launch status
+
+## Platform-Specific Features
+
+### macOS
+- Retina display support with UI scaling
+- Trackpad middle-mouse button configuration
+- Library paths: `~/Library/HDRI`, `~/Library/TEXTURES`, etc.
+- Desktop layout optimized for MacBook screens
+
+### Linux
+- GPU configuration (NVIDIA OpenCL and OptiX)
+- Redshift renderer support
+- Deadline render farm integration
+- RAID cache configuration
+- Library paths: `/mnt/DATA/LIBRARY/*`
+
+## Configuration
+
+### Environment Variables Reference
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HOUDINI_PIPELINE` | Auto-detected | Pipeline installation path |
+| `HOUDINI_VERSION` | 17.5.229 | Houdini version to use |
+| `REDSHIFT_VERSION` | 17.5.173 | Redshift version (Linux) |
+| `HOUDINI_UPDATE_REPOS` | Interactive | 1=update, 0=skip repos |
+| `HOUDINI_MMB_PAN` | Interactive | 0=trackpad, 1=mouse |
+| `HOUDINI_OCL_DEVICENUMBER` | 0 | OpenCL GPU device (Linux) |
+| `HOUDINI_NVIDIA_OPTIX_DEVICENUMBER` | 1 | OptiX GPU device (Linux) |
+
+### Custom Library Paths
+
+Override default library paths:
+```bash
+export L_HDRI="/custom/path/to/hdri"
+export L_TEXTURES="/custom/path/to/textures"
+export L_3DMODELS="/custom/path/to/models"
+./Houdini_Launcher.sh
+```
+
+## Troubleshooting
+
+### Pipeline path not found
+**Error:** `ERROR: Cannot auto-detect HOUDINI_PIPELINE path`
+
+**Solution:** Set the path manually:
+```bash
+export HOUDINI_PIPELINE="/path/to/Houdini_Pipeline"
+```
+
+### Houdini installation not found
+**Error:** `ERROR: Houdini installation not found`
+
+**Solution:**
+- Verify Houdini is installed
+- Check version matches: `/Applications/Houdini/Houdini17.5.229/` (macOS) or `/opt/hfs17.5` (Linux)
+- Override version: `export HOUDINI_VERSION="19.5.640"`
+
+### Git operations failing
+The pipeline automatically retries Git operations up to 4 times with exponential backoff (2s, 4s, 8s, 16s). If still failing:
+- Check network connectivity
+- Verify firewall settings
+- Check Git repository accessibility
+
+### Check the logs
+All operations are logged. Check the latest log file:
+```bash
+ls -lt logs/
+tail -f logs/houdini_launch_*.log
+```
+
+## System Requirements
+
+- **OS:** macOS 10.14+ or Linux (Ubuntu 18.04+, CentOS 7+)
+- **Houdini:** 17.5+ (tested with 17.5.229)
+- **Git:** For package management
+- **Bash:** 4.0+
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with clear commit messages
+4. Test on both macOS and Linux if possible
+5. Submit a pull request
+
+## ToDo / Roadmap
+
+- [ ] Windows support (PowerShell or WSL compatibility)
+- [ ] Web-based configuration GUI
+- [ ] Support for multiple Houdini versions simultaneously
+- [ ] Cloud render farm integration
+- [ ] Docker container support
+- [ ] Houdini Engine integration helpers
+
+## License
+
+This project is provided as-is for the Houdini community.
+
+## Credits
+
+**Packages Included:**
+- [GameDevelopmentToolset](https://github.com/sideeffects/GameDevelopmentToolset) by SideFX
+- [qLib](https://github.com/qLab/qLib) by qLab
+- [MOPS](https://github.com/toadstorm/MOPS) by Toadstorm
+- [VFX-LYNX](https://github.com/LucaScheller/VFX-LYNX) by Luca Scheller
+- [batch_textures_convert](https://github.com/jtomori/batch_textures_convert) by Juraj Tomori

@@ -1,5 +1,11 @@
 
 .DS_Store
+
+# Log files
+logs/
+*.log
+
+# Package directories
 GITHUB/batch_textures_convert/
 GITHUB/GameDevelopmentToolset/
 GITHUB/MOPS/
@@ -10,3 +16,10 @@ PACKAGES/GameDevelopmentToolset/
 PACKAGES/MOPS/
 PACKAGES/qLib/
 PACKAGES/VFX-LYNX/
+PACKAGES/HoudiniExprEditor*/
+PACKAGES/Alicevision*/
+
+# Temporary files
+*.tmp
+*.swp
+*~
