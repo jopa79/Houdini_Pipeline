@@ -3,11 +3,11 @@
 
 [![macOS](https://img.shields.io/badge/macOS-Compatible-brightgreen.svg)]()
 [![Linux](https://img.shields.io/badge/Linux-Compatible-brightgreen.svg)]()
-[![Windows](https://img.shields.io/badge/Windows-TBA-lightgrey.svg)]()
+[![Windows](https://img.shields.io/badge/Windows_10/11-Compatible-brightgreen.svg)]()
 
 ## Introduction
 
-A robust, production-ready Houdini environment management system that automates installation, configuration, and project initialization across macOS and Linux platforms. The pipeline intelligently detects your OS and configures platform-specific settings, manages external packages, and provides custom tools for VFX workflows.
+A robust, production-ready Houdini environment management system that automates installation, configuration, and project initialization across **Windows, macOS, and Linux** platforms. The pipeline intelligently detects your OS and configures platform-specific settings, manages external packages, and provides custom tools for VFX workflows.
 
 **Key Features:**
 - 🚀 **Auto-detection** of pipeline path and OS configuration
@@ -16,17 +16,26 @@ A robust, production-ready Houdini environment management system that automates 
 - ✅ **Error handling** and validation throughout
 - 🎨 **Custom HDAs** and shelf tools for TD workflows
 - 🖥️ **Desktop layouts** optimized for different screen sizes
-- 🎯 **Jump preferences** for quick file browser access (macOS & Linux)
+- 🎯 **Jump preferences** for quick file browser access (all platforms)
+- 💻 **Windows 10/11 support** with PowerShell and batch scripts
 
 ## What's New (Latest Updates)
 
-### ✨ Enhanced Features
+### 🎉 v3.0 - Windows 10/11 Support (NEW!)
+- **Windows PowerShell scripts**: Native Windows support with `.ps1` launcher
+- **Batch wrapper**: Double-click `.bat` file for easy execution
+- **Auto-detection on Windows**: Finds Houdini installation automatically
+- **Windows library paths**: Default paths in Documents folder
+- **Diagnostic tool**: `Test-Pipeline.ps1` checks configuration
+- **Comprehensive documentation**: Windows setup guide and troubleshooting
+
+### ✨ v2.0 - Enhanced Features
 - **Auto-path detection**: No more manual path editing! Pipeline path is auto-detected
 - **Comprehensive logging**: All operations logged to `logs/` directory with timestamps
 - **Non-interactive mode**: Run with flags or environment variables for CI/CD
 - **Git retry logic**: Automatic retry with exponential backoff for network failures
 - **Version flexibility**: Override Houdini version via environment variables
-- **macOS Jump Preferences**: Now includes library path quick access for macOS
+- **macOS Jump Preferences**: Library path quick access for macOS
 - **Configuration validation**: Validates Houdini installation and required files
 
 ### 🛡️ Robustness Improvements
@@ -75,6 +84,45 @@ Rename the launcher to make it double-clickable:
 mv Houdini_Launcher.sh Houdini_Launcher.command
 chmod +x Houdini_Launcher.command
 ```
+
+### Windows Installation
+
+**Quick Start:**
+
+1. **Download/Clone the repository:**
+   ```cmd
+   cd %USERPROFILE%\Documents
+   git clone https://github.com/yourusername/Houdini_Pipeline.git
+   cd Houdini_Pipeline
+   ```
+
+2. **Run diagnostic check:**
+   ```cmd
+   powershell -ExecutionPolicy Bypass -File windows\Test-Pipeline.ps1
+   ```
+
+3. **Launch Houdini:**
+
+   **Option A - Double-click:** `windows\Houdini_Launcher.bat`
+
+   **Option B - Command line:**
+   ```cmd
+   windows\Houdini_Launcher.bat
+   ```
+
+   **Option C - PowerShell:**
+   ```powershell
+   .\windows\Houdini_Launcher.ps1
+   ```
+
+**Detailed Windows Setup:**
+
+See the comprehensive [Windows Setup Guide](docs/WINDOWS_SETUP_GUIDE.md) for:
+- Prerequisites and system requirements
+- Step-by-step installation
+- Configuration options
+- Troubleshooting
+- FAQ
 
 ## Usage
 
