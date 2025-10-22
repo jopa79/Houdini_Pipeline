@@ -21,13 +21,16 @@ A robust, production-ready Houdini environment management system that automates 
 
 ## What's New (Latest Updates)
 
-### 🎉 v3.0 - Windows 10/11 Support (NEW!)
+### 🎉 v3.0 - Windows 10/11 & WSL Support (NEW!)
 - **Windows PowerShell scripts**: Native Windows support with `.ps1` launcher
 - **Batch wrapper**: Double-click `.bat` file for easy execution
-- **Auto-detection on Windows**: Finds Houdini installation automatically
+- **WSL support**: Full Windows Subsystem for Linux compatibility
+- **Universal launcher**: Auto-detects and uses PowerShell, WSL, or Git Bash
+- **Path translation**: Automatic Windows ↔ WSL path conversion
+- **Auto-detection**: Finds Houdini installation on Windows or via WSL
 - **Windows library paths**: Default paths in Documents folder
 - **Diagnostic tool**: `Test-Pipeline.ps1` checks configuration
-- **Comprehensive documentation**: Windows setup guide and troubleshooting
+- **Comprehensive documentation**: Windows, WSL, and troubleshooting guides
 
 ### ✨ v2.0 - Enhanced Features
 - **Auto-path detection**: No more manual path editing! Pipeline path is auto-detected
@@ -123,6 +126,49 @@ See the comprehensive [Windows Setup Guide](docs/WINDOWS_SETUP_GUIDE.md) for:
 - Configuration options
 - Troubleshooting
 - FAQ
+
+### WSL (Windows Subsystem for Linux)
+
+**For Linux/bash users on Windows:**
+
+WSL allows you to use the same bash scripts as macOS/Linux:
+
+1. **Install WSL 2:**
+   ```powershell
+   wsl --install
+   ```
+   (Restart computer when prompted)
+
+2. **Setup Ubuntu and install Git:**
+   ```bash
+   sudo apt update && sudo apt install git -y
+   ```
+
+3. **Clone pipeline in WSL:**
+   ```bash
+   cd ~
+   git clone https://github.com/yourusername/Houdini_Pipeline.git
+   cd Houdini_Pipeline
+   ```
+
+4. **Launch Houdini:**
+   ```bash
+   ./Houdini_Launcher.sh
+   ```
+
+**Or use the Universal Launcher from Windows:**
+```cmd
+Launch-Houdini.bat --wsl
+```
+
+**Detailed WSL Setup:**
+
+See the comprehensive [WSL Setup Guide](docs/WSL_SETUP_GUIDE.md) for:
+- What is WSL and why use it
+- Installation and configuration
+- Path translation between Windows and WSL
+- Troubleshooting WSL-specific issues
+- FAQ and advanced topics
 
 ## Usage
 

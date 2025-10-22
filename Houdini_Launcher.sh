@@ -116,7 +116,29 @@ fi
 log "Launching Houdini..."
 log "========================================="
 
-if command -v houdini >/dev/null 2>&1; then
+# Check if running in WSL - use Windows Houdini executable
+if [ "${WSL:-false}" = true ] && [ -n "${HOUDINI_EXEC:-}" ]; then
+    log "WSL Mode: Launching Windows Houdini from WSL"
+    log "Executable: $HOUDINI_EXEC"
+
+    # Convert HIP to Windows path for Houdini
+    HIP_WIN=$(wsl_to_win "$HIP")
+    log "Project directory (Windows): $HIP_WIN"
+
+    # Launch Windows Houdini from WSL
+    # The .exe can be called directly from WSL
+    if [ -f "$HOUDINI_EXEC" ]; then
+        # Launch in background and return to shell
+        "$HOUDINI_EXEC" &
+        log "Houdini launched successfully (PID: $!)"
+    else
+        log "ERROR: Houdini executable not found: $HOUDINI_EXEC"
+        log "Please ensure Houdini is installed on Windows"
+        exit 1
+    fi
+elif command -v houdini >/dev/null 2>&1; then
+    # Native Linux or macOS - use houdini command
+    log "Launching native Houdini..."
     houdini 2>&1 | tee -a "$LOG_FILE"
 else
     log "ERROR: houdini command not found in PATH"
